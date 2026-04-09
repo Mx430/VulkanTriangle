@@ -9,12 +9,12 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		30701ED92F7534B200C4C057 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 10;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -245,6 +245,33 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/include,
+					/opt/homebrew/Cellar/glfw/3.4/include,
+					/opt/homebrew/Cellar/glm/1.0.3/include,
+					/opt/homebrew/include,
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/include,
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/",
+					"@loader_path/",
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/lib,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/lib,
+					/usr/local/lib,
+					/opt/homebrew/Cellar/glfw/3.4/lib,
+					/opt/homebrew/Cellar/glm/1.0.3/lib,
+					/opt/homebrew/lib,
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/lib,
+				);
+				"OTHER_LDFLAGS[arch=*]" = (
+					"-lglfw\n-lvulkan\n-framework",
+					"Cocoa\n-framework",
+					"IOKit\n-framework",
+					CoreVideo,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -253,6 +280,41 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/include,
+					/opt/homebrew/Cellar/glfw/3.4/include,
+					/opt/homebrew/Cellar/glm/1.0.3/include,
+					/opt/homebrew/include,
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/include,
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/",
+					"@loader_path/",
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/lib,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/lib,
+					/usr/local/lib,
+					/opt/homebrew/Cellar/glfw/3.4/lib,
+					/opt/homebrew/Cellar/glm/1.0.3/lib,
+					/opt/homebrew/lib,
+					/Users/yaoyao/VulkanSDK/1.2.198.1/macOS/lib,
+				);
+				OTHER_LDFLAGS = (
+					"-lglfw",
+					"-lvulkan",
+					"\"-framework Cocoa\"",
+					"\"-framework IOKit\"",
+					"\"-framework CoreVideo\"",
+				);
+				"OTHER_LDFLAGS[arch=*]" = (
+					"-lglfw",
+					"-lvulkan",
+					"\"-framework Cocoa\"",
+					"\"-framework IOKit\"",
+					"\"-framework CoreVideo\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

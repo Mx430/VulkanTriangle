@@ -12,7 +12,7 @@
 #include <cstdint> // Necessary for uint32_t
 #include <limits> // Necessary for std::numeric_limits
 #include <algorithm> // Necessary for std::clamp
-
+#include <fstream>
 
 class HelloTriangleApplication {
 public:
@@ -218,6 +218,34 @@ private:
         
         createImageViews();
 
+        createGraphicPipeline();
+    }
+    
+    void createGraphicPipeline() {
+        auto vertShaderCode = readFile("shaders/vert.spv");
+        auto fragShaderCode = readFile("shaders/frag.spv");
+
+        VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
+        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+
+        VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+        vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+
+        vertShaderStageInfo.module = vertShaderModule;
+        vertShaderStageInfo.pName = "main";
+        
+        VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+        fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        fragShaderStageInfo.module = fragShaderModule;
+        fragShaderStageInfo.pName = "main";
+
+        VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
+        // destroy shaders
+        vkDestroyShaderModule(device, fragShaderModule, nullptr);
+        vkDestroyShaderModule(device, vertShaderModule, nullptr);
+        
     }
 
     void createImageViews() {
@@ -250,19 +278,19 @@ private:
 
     void createSwapChain() {
         SwapChainSupportDetails swapChainSupport = querySwapChainSupport(physicalDevice);
-        
+
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFprmat(swapChainSupport.formats);
-        
+
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-        
+
         VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
-        
+
         uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-        
+
         if(swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
             imageCount = swapChainSupport.capabilities.maxImageCount;
         }
-        
+
         // fill structure
         VkSwapchainCreateInfoKHR createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -545,7 +573,40 @@ private:
         glfwTerminate();
     }
 
+    static std::vector<char> readFile(const std::string& filename) {
+        std::ifstream file(filename, std::ios::ate | std::ios::binary);
+        
+        if(!file.is_open()) {
+            throw std::runtime_error("failed to open file!");
+        }
+        
+        size_t fileSize = (size_t) file.tellg();
+        printf("file size:%zu\n", fileSize);
+
+        std::vector<char> buffer(fileSize);
+        
+        file.seekg(0);
+        file.read(buffer.data(), fileSize);
+
+        file.close();
+        
+        return buffer;
+    }
+
+    VkShaderModule createShaderModule(const std::vector<char>& code) {
+        VkShaderModuleCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+        createInfo.codeSize = code.size();
+        createInfo.pCode= reinterpret_cast<const uint32_t*>(code.data());
+        
+        VkShaderModule shaderModule;
+        if(vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
+            throw std::runtime_error("failed to create shader module!");
+        }
+        return shaderModule;
+    }
 };
+
 
 int main() {
     usleep(850000);
